@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <bean id="zgtongDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
+          destroy-method="close" lazy-init="true"
+          p:url="${mysql.zgtong.url}"
+          p:username="${mysql.zgtong.username}"
+          p:password="${mysql.zgtong.password}"
+          p:initialSize="5"
+          p:minIdle="1"
+          p:maxActive="20"
+          p:maxWait="60000"
+          p:timeBetweenEvictionRunsMillis="60000"
+          p:minEvictableIdleTimeMillis="300000"
+          p:validationQuery="SELECT 'x'"
+          p:testWhileIdle="true"
+          p:testOnBorrow="false"
+          p:testOnReturn="false"
+          p:poolPreparedStatements="false"
+          p:maxPoolPreparedStatementPerConnectionSize="20"
+          p:connectionProperties="config.decrypt=true"
+          p:filters="stat,config">
+    </bean>
+
+    <bean id="zgtongSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+          p:dataSource-ref="zgtongDataSource" p:mapperLocations="classpath:sqlmapper/single/*.xml" lazy-init="true"/>
+    <bean id="zgtongSqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate"
+          c:_0-ref="zgtongSqlSessionFactory" lazy-init="true"/>
+
+
+    <!-- 定义事务管理器 -->
+    <bean id="zgtongTransactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="zgtongDataSource"/>
+    </bean>
+    <!--使用注释事务 -->
+    <tx:annotation-driven transaction-manager="zgtongTransactionManager"/>
+
+    <bean id="zgtongTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="zgtongTransactionManager"/>
+    </bean>
+
+
+    <bean id="log-filter" class="com.alibaba.druid.filter.logging.Slf4jLogFilter">
+        <property name="connectionLogEnabled" value="false"/>
+        <property name="statementLogEnabled" value="false"/>
+        <property name="resultSetLogEnabled" value="true"/>
+        <property name="statementExecutableSqlLogEnable" value="true"/>
+    </bean>
+
+</beans>

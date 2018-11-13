@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zgtong.web.dao.UserInfoDAO">
+
+    <resultMap id="userInfoMap" type="com.zgtong.web.dataobject.UserInfoDO">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="mobile_phone" property="mobilePhone"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="updated_time" property="updatedTime"/>
+    </resultMap>
+
+
+    <sql id="user_info_column">
+        user_id,user_name,created_time,updated_time,mobile_phone
+    </sql>
+
+    <sql id="add_user_info_column">
+        user_id,user_name,created_time,updated_time,mobile_phone
+    </sql>
+
+
+
+    <insert id="addUserInfo" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.zgtong.web.dataobject.UserInfoDO">
+        insert into user_info (
+        <include refid="add_user_info_column"/>
+        )
+        values
+        (
+        #{userId},#{userName}, now(), now(), #{mobilePhone}
+        )
+
+    </insert>
+
+
+    <select id="getByUserId" parameterType="HashMap" resultMap="userInfoMap">
+        SELECT
+          id,<include refid="user_info_column"/>
+        FROM
+          user_info
+        WHERE
+          user_id  = #{userId}
+    </select>
+
+
+    <update id="updateUserInfo" parameterType="com.zgtong.web.dataobject.UserInfoDO">
+        UPDATE
+          user_info
+        SET
+          <if test="mobilePhone != null">mobile_phone=#{mobilePhone},</if>
+          updated_time=now()
+        WHERE
+          user_id=#{userId}
+    </update>
+
+    <select id="queryUserCount" parameterType="map" resultType="int">
+        SELECT
+        count(1)
+        FROM
+        user_info
+    </select>
+
+    <select id="pageQueryUser" parameterType="map" resultMap="userInfoMap">
+        select id,<include refid="user_info_column"/>
+        from user_info
+        order by created_time desc
+        limit #{offset}, #{pageSize}
+    </select>
+
+
+</mapper>
