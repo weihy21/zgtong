@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//dal.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zgtong.web.account.dao.ManagerAccountDao">
+
+    <sql id="tableName">manager_account</sql>
+
+
+    <resultMap id="managerAccountMap" type="com.zgtong.web.account.dataobject.ManagerAccountDo">
+        <result property="id" column="id"/>
+        <result property="userName" column="user_name"/>
+        <result property="password" column="password"/>
+        <result property="staffId" column="staff_id"/>
+        <result property="staffName" column="staff_name"/>
+        <result property="status" column="status"/>
+        <result property="type" column="type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="departmentId" column="department_id"/>
+        <result property="position" column="position"/>
+        <result property="passwordResetTime" column="password_reset_time"/>
+    </resultMap>
+
+    <sql id="columns">
+        user_name,password,staff_id,staff_name,status,`type`
+        ,create_time,update_time,department_id,position,password_reset_time
+    </sql>
+
+    <sql id="allColumns">
+        id,
+        <include refid="columns"/>
+    </sql>
+
+
+    <insert id="insertAccount" parameterType="com.zgtong.web.account.dataobject.ManagerAccountDo" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into
+        <include refid="tableName"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="columns"/>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{userName},#{password},#{staffId},#{staffName},#{status},#{type}
+            ,now(),now(),#{departmentId},#{position},now()
+        </trim>
+    </insert>
+
+
+    <select id="selectAccountList"  resultMap="managerAccountMap">
+        select
+        <include refid="allColumns"/>
+        from
+        <include refid="tableName"/>
+        <include refid="accountWhereSql"/>
+        order by `type` desc limit #{offset},#{pageSize};
+    </select>
+
+    <select id="selectAccountcount" resultType="int">
+        select count(id)       from
+        <include refid="tableName"/>
+
+        <include refid="accountWhereSql"/>
+    </select>
+
+    <sql id="accountWhereSql">
+         WHERE 1=1
+        <if test="departmentId != null ">
+             AND department_id = #{departmentId}
+        </if>
+        <if test="phone != null ">
+            AND user_name like concat(concat('%',#{phone}),'%')
+        </if>
+        <if test="userName != null ">
+            AND staff_name like concat(concat('%',#{userName}),'%')
+        </if>
+    </sql>
+
+
+    <select id="selectAccountById" resultMap="managerAccountMap">
+        select
+        <include refid="allColumns"/>
+        from
+        <include refid="tableName"/>
+        where id=#{id}
+        <if test="status == true">
+            AND status in (0,1)
+        </if>
+
+    </select>
+
+    <select id="selectByUserName" resultMap="managerAccountMap" parameterType="map">
+        select
+        <include refid="allColumns"/>
+        from
+        <include refid="tableName"/>
+        where user_name=#{userName}
+        <if test="status == true">
+        AND status in (0,1)
+    </if>
+    </select>
+
+
+
+
+    <update id="updateAccount" parameterType="com.zgtong.web.account.dataobject.ManagerAccountDo">
+        update
+        <include refid="tableName"/>
+        <set>
+            <if test="password != null">password = #{password},</if>
+            <if test="staffId != null">staff_id = #{staffId},</if>
+            <if test="staffName != null">staff_name = #{staffName},</if>
+            <if test="status !=null">status = #{status},</if>
+            <if test="type != null">`type` = #{type},</if>
+            <if test="accessToken != null">access_token = #{accessToken},</if>
+            <if test="accessTokenTimeout != null">access_token_timeout = #{accessTokenTimeout},</if>
+            <if test="departmentId != null">department_id=#{departmentId},</if>
+            <if test="position != null">position=#{position},</if>
+            <if test="passwordResetTime != null">password_reset_time=#{passwordResetTime},</if>
+            update_time=now()
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteById">
+      UPDATE
+        <include refid="tableName"/>
+        SET  status=#{isDelete},lastupdate_user_id=#{currentUserId} ,update_time=now()
+        where id=#{userId} ;
+    </update>
+
+
+</mapper>

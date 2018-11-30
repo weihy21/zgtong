@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//dal.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zgtong.web.account.dao.UserRoleDao">
+
+    <sql id="tableName">user_role</sql>
+
+
+    <resultMap id="userRoleMap" type="com.zgtong.web.account.domain.response.UserRoleVO">
+        <result property="id" column="id"/>
+        <result property="userID" column="user_id"/>
+        <result property="roleID" column="role_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="columns">
+        user_id,role_id,create_time,update_time
+    </sql>
+    <sql id="allColumns">
+        id,
+        <include refid="columns"/>
+    </sql>
+
+    <select id="findUserRole" resultMap="userRoleMap" parameterType="com.zgtong.web.account.domain.response.UserRoleVO">
+        select
+        <include refid="allColumns"/>
+        from
+        <include refid="tableName"/>
+        <if test="userID != null">
+        where user_id=#{userID};
+        </if>
+    </select>
+
+    <insert id="createUserRole" parameterType="java.util.List">
+        insert into
+        <include refid="tableName"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="columns"/>
+        </trim>
+        VALUES
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.userID},#{item.roleID},now(),now())
+        </foreach>
+    </insert>
+
+    <delete id="deleteUserRole" parameterType="com.zgtong.web.account.domain.response.UserRoleVO">
+        delete from
+        <include refid="tableName"/>
+        where user_id=#{userID} limit 100;
+    </delete>
+
+
+
+    <resultMap id="accountRoleMap" type="com.zgtong.web.account.domain.response.UserRoleVO">
+        <result property="userID" column="user_id"/>
+        <result property="roleID" column="role_id"/>
+        <result property="roleName" column="name"/>
+        <result property="desc" column="description"/>
+    </resultMap>
+    <select id="findAccentRole" resultMap="accountRoleMap" >
+        SELECT a.user_id,a.role_id,b.`name`,b.description  from user_role a,role b WHERE a.role_id=b.id
+    </select>
+</mapper>

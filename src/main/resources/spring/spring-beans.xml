@@ -16,5 +16,6 @@
 
 
     <bean id="userInfoService" class="com.zgtong.web.service.impl.UserInfoServiceImpl"/>
+    <bean id="accountService" class="com.zgtong.web.account.service.impl.AccountServiceImpl"/>
 
 </beans>

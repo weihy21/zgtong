@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * response 标准模板,请勿继承. Created by weihy on 18/11/09.
+ * response 标准模板,请勿继承
  */
 @Getter
 public final class ServiceResponse<T> extends TraceObject implements Serializable {

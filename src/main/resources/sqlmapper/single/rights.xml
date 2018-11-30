@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//dal.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zgtong.web.account.dao.RightsDao">
+
+    <sql id="tableName">rights</sql>
+
+
+    <resultMap id="rightsMap" type="com.zgtong.web.account.dataobject.RightsDo">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="desc" column="desc"/>
+        <result property="pathPrefix" column="path_prefix"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="type" column="type"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="resource" column="resource"/>
+    </resultMap>
+
+    <sql id="columns">
+        `name`,`desc`,`path_prefix`, create_time,update_time,`type`,`parent_id`,resource
+    </sql>
+
+    <sql id="allColumns">
+        id,
+        <include refid="columns"/>
+    </sql>
+
+    <select id="selectById" resultMap="rightsMap">
+        select
+        <include refid="allColumns"/>
+        from
+        <include refid="tableName"/>
+        where id IN
+        <foreach item="item" index="index" collection="list" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectRightAll" resultMap="rightsMap">
+        select
+        <include refid="allColumns"/>
+        from
+        <include refid="tableName"/>
+        order by create_time desc limit 1000;
+    </select>
+
+
+    <select id="selectByUserId"  resultMap="rightsMap" >
+        select
+        distinct a.id,a.name,a.path_prefix,a.create_time,a.type,a.parent_id,a.resource
+        from
+        rights a ,
+        role_right b,
+        user_role c
+        where a.id = b.right_id
+        and c.role_id = b.role_id
+        and c.user_id = #{userId}
+        <if test="type != null">
+            and a.type = #{type}
+        </if>
+        order by create_time desc limit 1000;
+    </select>
+
+
+</mapper>

@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 public class UserInfoRequest implements Serializable {
 
-    private static final long serialVersionUID = 6511139081410229887L;
+    private static final long serialVersionUID = -2113692209220334786L;
     private Long id;
     private Long userId;        /**用户ID**/
     private String userName;

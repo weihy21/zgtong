@@ -9,9 +9,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import java.util.List;
@@ -20,6 +19,7 @@ import java.util.List;
 @ComponentScan
 @SpringBootApplication
 @ImportResource("classpath*:/spring/*.xml")
+@CrossOrigin
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class})
 public class BootStrap extends WebMvcConfigurationSupport {
 

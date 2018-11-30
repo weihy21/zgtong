@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 public class UserInfoSearchRequest implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7010426337514675033L;
     private Integer pageSize = 10;
     private Integer pageNumber = 1;
 
